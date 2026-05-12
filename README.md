@@ -1,4 +1,3 @@
-<img width="1920" height="1080" alt="failed _ci_debug" src="https://github.com/user-attachments/assets/364cb551-ed20-42d0-91a5-eec4d891a8a4" /># Exclusive-report-generator
 # Assignment 5 :
 
 # CI/CD Basics
