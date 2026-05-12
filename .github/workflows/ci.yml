@@ -1,0 +1,70 @@
+name: Spring Boot CI
+
+on:
+  push:
+    branches:
+      - development
+
+jobs:
+  build:
+    runs-on: self-hosted
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Java 21 and Maven if Missing
+        run: |
+          # Check Java
+          if command -v java >/dev/null 2>&1; then
+            echo "Java already installed"
+            java -version
+          else
+            echo "Installing OpenJDK 21..."
+            sudo apt update
+            sudo apt install -y openjdk-21-jdk
+          fi
+
+          # Check Maven
+          if command -v mvn >/dev/null 2>&1; then
+            echo "Maven already installed"
+            mvn -version
+          else
+            echo "Installing Maven..."
+            sudo apt install -y maven
+          fi
+
+          # Verify installations
+          java -version
+          mvn -version
+
+      - name: Clean Project
+        run: mvn clean
+
+      - name: Run Tests
+        run: mvn test -X
+
+      - name: Build Spring Boot Application
+        run: mvn package -DskipTests
+
+      - name: Upload Test Reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports
+          path: target/surefire-reports/
+
+      - name: Upload Debug Logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-logs
+          path: |
+            *.log
+            logs/
+
+      - name: Cleanup Workspace
+        if: always()
+        run: |
+          rm -rf target/tmp
