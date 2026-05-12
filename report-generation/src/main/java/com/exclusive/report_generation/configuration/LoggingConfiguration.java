@@ -8,9 +8,6 @@ import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 
 
-@Aspect
-@Component
-@Slf4j
 public class LoggingConfiguration {
     private static final String CORRELATION_ID_HEADER = "X-Correlation-Id";
     @Around("execution(* com.exclusive.report_generation..*(..))")
