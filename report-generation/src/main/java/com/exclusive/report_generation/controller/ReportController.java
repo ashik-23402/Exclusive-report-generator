@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 public class ReportController {
 
-    @GetMapping("/generate")
     public Report generateReport() throws InterruptedException {
 
         return "reportService.generateReport(ReportType.DEFAULT)";
