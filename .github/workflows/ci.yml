@@ -16,39 +16,42 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Debug Workspace (IMPORTANT)
+        run: |
+          pwd
+          ls -R
+
       - name: Install Java 21 and Maven if Missing
         run: |
-          # Check Java
-          if command -v java >/dev/null 2>&1; then
-            echo "Java already installed"
-            java -version
-          else
+          # Install Java if missing
+          if ! command -v java >/dev/null 2>&1; then
             echo "Installing OpenJDK 21..."
             sudo apt update
             sudo apt install -y openjdk-21-jdk
-          fi
-
-          # Check Maven
-          if command -v mvn >/dev/null 2>&1; then
-            echo "Maven already installed"
-            mvn -version
           else
-            echo "Installing Maven..."
-            sudo apt install -y maven
+            echo "Java already installed"
           fi
 
-          # Verify installations
+          # Install Maven if missing
+          if ! command -v mvn >/dev/null 2>&1; then
+            echo "Installing Maven..."
+            sudo apt update
+            sudo apt install -y maven
+          else
+            echo "Maven already installed"
+          fi
+
           java -version
           mvn -version
 
       - name: Clean Project
-        run: mvn clean
+        run: mvn -f pom.xml clean
 
       - name: Run Tests
-        run: mvn test -X
+        run: mvn -f pom.xml test -X
 
       - name: Build Spring Boot Application
-        run: mvn package -DskipTests
+        run: mvn -f pom.xml package -DskipTests
 
       - name: Upload Test Reports
         if: failure()
@@ -56,6 +59,7 @@ jobs:
         with:
           name: surefire-reports
           path: target/surefire-reports/
+          if-no-files-found: ignore
 
       - name: Upload Debug Logs
         if: failure()
@@ -65,6 +69,7 @@ jobs:
           path: |
             *.log
             logs/
+          if-no-files-found: ignore
 
       - name: Cleanup Workspace
         if: always()
