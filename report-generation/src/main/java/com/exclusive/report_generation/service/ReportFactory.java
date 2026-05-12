@@ -5,12 +5,5 @@ import com.exclusive.report_generation.utils.enums.ReportType;
 
 public class ReportFactory {
 
-    public static Report generateReport(ReportType reportType) {
-        if (reportType == ReportType.DEFAULT) {
 
-            return DefaultReportProvider.getInstance().getDefaultReport();
-        }
-        // Future implementation when database is available
-        return null;
-    }
 }
