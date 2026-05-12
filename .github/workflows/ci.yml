@@ -3,11 +3,13 @@ name: Spring Boot CI
 on:
   push:
     branches:
-      - development
+      - develop
+
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: [self-hosted, linux, ec2]
     timeout-minutes: 20
 
     steps:
